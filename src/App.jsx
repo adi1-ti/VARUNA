@@ -1,79 +1,111 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
 import { IncidentProvider } from './context/IncidentContext';
-import Sidebar from './components/Sidebar';
-import Topbar from './components/Topbar';
+import TacticalTopBar from './components/TacticalTopBar';
+import AnalyticsControls from './components/AnalyticsControls';
+import VesselDetailsDrawer from './components/VesselDetailsDrawer';
+import GeointMap from './components/GeointMap';
+import ReportModal from './components/ReportModal';
 
-import Dashboard from './pages/Dashboard';
-import SatelliteDetection from './pages/SatelliteDetection';
-import OriginReconstruction from './pages/OriginReconstruction';
-import VesselAttribution from './pages/VesselAttribution';
-import IntelligenceMap from './pages/IntelligenceMap';
-import Analytics from './pages/Analytics';
+function GeointPlatformWorkspace() {
+  // Operational View Mode: 'tactical' (reference image), 'sar' (SAR mask), 'drift' (drift simulation)
+  const [currentMode, setCurrentMode] = useState('tactical');
 
-function AppLayout() {
-  const location = useLocation();
+  // Left Controls Panel State
+  const [isControlsOpen, setIsControlsOpen] = useState(true);
+  const [filters, setFilters] = useState({
+    confidenceThreshold: 0.85,
+    showBoundingBoxes: true,
+    showTrajectories: true,
+    detectionModel: 'MULTI-MODAL OPTICAL/SAR',
+    matchedAisVessels: true,
+    unmatchedVessels: true,
+    rfSignalCorrelation: true,
+    timeWindowHours: 24,
+    satelliteOptical: true,
+    syntheticRadar: true,
+    automaticIdentification: true,
+  });
 
-  const getPageTitle = (pathname) => {
-    switch (pathname) {
-      case '/satellite':
-        return 'Satellite SAR Detection';
-      case '/origin':
-        return 'Hydrodynamic Origin Reconstruction';
-      case '/vessels':
-        return 'Vessel Attribution & Anomaly Analysis';
-      case '/map':
-        return 'GIS Operational Intelligence Map';
-      case '/analytics':
-        return 'Forensic Analytics & Evidentiary Dossier';
-      case '/':
-      default:
-        return 'Maritime Command Center';
-    }
-  };
+  // Right Details Drawer State
+  const [isDetailsOpen, setIsDetailsOpen] = useState(true);
+  const [selectedTarget, setSelectedTarget] = useState({
+    label: "UNMATCHED TARGET #42",
+    mmsi: "N/A (AIS NOT BROADCASTING)",
+    imo: "UNKNOWN",
+    callSign: "N/A",
+    flag: "UNKNOWN",
+    status: "UNMATCHED / DARK VESSEL",
+    source: "OPTICAL & SAR FUSION",
+    confidence: "92%",
+    length: "185m",
+    width: "28m",
+    tonnage: "35,000 GT",
+    classifiedType: "TANKER / BULK CARRIER",
+    lastDetected: "2026-02-09 14:35:22 UTC",
+    firstDetected: "2026-02-08 23:10:45 UTC",
+    speed: "12.5 KNOTS",
+    heading: "210° (SSW)",
+    lastAisPos: "N/A",
+    notes: "VESSEL OPERATING WITHOUT AIS IN RESTRICTED ZONE. RF SIGNALS DETECTED IN VICINITY CORRELATE WITH VESSEL POSITION. UNUSUAL LOITERING PATTERN OBSERVED.",
+  });
+
+  // Evidentiary Dossier Modal State
+  const [isReportOpen, setIsReportOpen] = useState(false);
 
   return (
-    <div className="app-container">
-      {/* Fixed Command Sidebar */}
-      <Sidebar />
+    <div className="geoint-workspace">
+      {/* 1. Tactical Command Header */}
+      <TacticalTopBar
+        currentMode={currentMode}
+        setCurrentMode={setCurrentMode}
+        onOpenReportModal={() => setIsReportOpen(true)}
+      />
 
-      {/* Main Content Viewport */}
-      <div className="main-wrapper">
-        {/* Top Simulation Protocol Notice */}
-        <div className="simulation-banner">
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span className="pulse-dot pulse-dot-amber" />
-            <span>VARUNA DEFENCE & CIVIL SURVEILLANCE · SIMULATION ENVIRONMENT</span>
-          </div>
-          <span className="badge">DEMONSTRATION DATASET</span>
-        </div>
+      {/* 2. Main Full-Screen Geospatial Intelligence Center */}
+      <div className="geoint-map-area">
+        {/* Full-bleed Satellite Map with Concentric Envelopes & AIS Overlays */}
+        <GeointMap
+          filters={filters}
+          currentMode={currentMode}
+          onSelectTarget={(target) => {
+            setSelectedTarget(target);
+            setIsDetailsOpen(true);
+          }}
+          selectedTarget={selectedTarget}
+        />
 
-        {/* Global Context Topbar */}
-        <Topbar pageTitle={getPageTitle(location.pathname)} />
+        {/* Left-side Analytics Controls Drawer (Dock + Floating Panel) */}
+        <AnalyticsControls
+          filters={filters}
+          setFilters={setFilters}
+          isOpen={isControlsOpen}
+          setIsOpen={setIsControlsOpen}
+        />
 
-        {/* Page Content Viewport */}
-        <main className="content-viewport">
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/satellite" element={<SatelliteDetection />} />
-            <Route path="/origin" element={<OriginReconstruction />} />
-            <Route path="/vessels" element={<VesselAttribution />} />
-            <Route path="/map" element={<IntelligenceMap />} />
-            <Route path="/analytics" element={<Analytics />} />
-            <Route path="*" element={<Dashboard />} />
-          </Routes>
-        </main>
+        {/* Right-side Target Intelligence Drawer matching Reference Image */}
+        <VesselDetailsDrawer
+          isOpen={isDetailsOpen}
+          onClose={() => setIsDetailsOpen(false)}
+          selectedTarget={selectedTarget}
+          onSelectTarget={setSelectedTarget}
+          onOpenReport={() => setIsReportOpen(true)}
+        />
       </div>
+
+      {/* 3. Formal Evidentiary Report Modal */}
+      <ReportModal
+        isOpen={isReportOpen}
+        onClose={() => setIsReportOpen(false)}
+        target={selectedTarget}
+      />
     </div>
   );
 }
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <IncidentProvider>
-        <AppLayout />
-      </IncidentProvider>
-    </BrowserRouter>
+    <IncidentProvider>
+      <GeointPlatformWorkspace />
+    </IncidentProvider>
   );
 }
