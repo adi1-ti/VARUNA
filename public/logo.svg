@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <defs>
+    <linearGradient id="varunaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#18B6A4" />
+      <stop offset="100%" stop-color="#3987C9" />
+    </linearGradient>
+    <linearGradient id="varunaGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#18B6A4" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#18B6A4" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+  <!-- Outer radar ring -->
+  <circle cx="50" cy="50" r="46" stroke="url(#varunaGrad)" stroke-width="2.5" stroke-dasharray="8 4" opacity="0.8" />
+  <circle cx="50" cy="50" r="36" stroke="#102B40" stroke-width="1.5" />
+  <circle cx="50" cy="50" r="24" stroke="#18B6A4" stroke-width="1" stroke-dasharray="3 3" opacity="0.6" />
+  
+  <!-- Crosshairs -->
+  <line x1="50" y1="6" x2="50" y2="20" stroke="#18B6A4" stroke-width="2" />
+  <line x1="50" y1="80" x2="50" y2="94" stroke="#18B6A4" stroke-width="2" />
+  <line x1="6" y1="50" x2="20" y2="50" stroke="#18B6A4" stroke-width="2" />
+  <line x1="80" y1="50" x2="94" y2="50" stroke="#18B6A4" stroke-width="2" />
+  
+  <!-- Ocean Waves & Central Trident/Beacon -->
+  <path d="M26 62 Q38 52 50 62 T74 62" stroke="#3987C9" stroke-width="3" stroke-linecap="round" fill="none" />
+  <path d="M32 70 Q41 62 50 70 T68 70" stroke="#18B6A4" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.7" />
+  
+  <!-- Central Vessel/Trident Beacon -->
+  <polygon points="50,22 59,48 50,42 41,48" fill="url(#varunaGrad)" />
+  <circle cx="50" cy="42" r="2.5" fill="#F5F8FA" />
+</svg>
